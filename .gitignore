@@ -9,3 +9,7 @@ dist
 *.swo
 *.pyc
 .idea
+/lucene_querybuilder-0.2-py2.7.egg/
+/nose-1.1.2-py2.7.egg/
+/py2neo-1.5-py2.7.egg
+/pytz-2013b-py2.7.egg
