@@ -35,6 +35,7 @@ def test_batch_validation():
 
 
 def test_batch_index_violation():
+    l = Customer.category().instance.all()
     for u in Customer.category().instance.all():
         u.delete()
 

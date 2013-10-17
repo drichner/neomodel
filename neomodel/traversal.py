@@ -232,9 +232,12 @@ class AstBuilder(object):
                 if not ('limit' in entry or 'skip' in entry):
                     ast.insert(len(ast) - i, self.order_part)
                     break
-        results, _ = self.start_node.cypher(Query(ast), self.query_params)
+        qry = Query(ast)
+        qry= str(qry)
+        tst = self.start_node.cypher(qry, self.query_params)
+        #results, _ = self.start_node.cypher(qry, self.query_params)
         self.last_ast = ast
-        return results
+        return tst.data
 
     def execute_and_inflate_nodes(self, ast):
         target_map = last_x_in_ast(ast, 'target_map')['target_map']
@@ -313,7 +316,7 @@ class Query(object):
         self.ident_count = 0
         self.query = ''
         for entry in self.ast:
-            self.query += self._render(entry) + "\n"
+            self.query += self._render(entry) + " "
             self.position += 1
         return self.query
 
@@ -341,8 +344,8 @@ class Query(object):
 
     def _render_match(self, entry):
         # add match clause if at start
-        stmt = "MATCH\n" if 'start' in self.ast[self.position - 1] else ''
-        stmt += ",\n".join([rel_helper(**rel) for rel in entry['match']])
+        stmt = "MATCH " if 'start' in self.ast[self.position - 1] else ''
+        stmt += ", ".join([rel_helper(**rel) for rel in entry['match']])
         return stmt
 
     def _render_where(self, entry):

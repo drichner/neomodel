@@ -47,8 +47,8 @@ def cypher_query(query, params=None):
         res = qry.execute(**params)
         return res
     except Exception as e:
-        message, etype, jtrace = e.args
-        raise CypherException(query, params, message, etype, jtrace)
+        message =  e.message
+        raise Exception(query, params, message, None, None)
 
 
 class CypherMixin(object):
