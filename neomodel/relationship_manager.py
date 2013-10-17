@@ -5,9 +5,9 @@ from importlib import import_module
 from .exception import DoesNotExist, NotConnected
 from .util import camel_to_upper
 
-OUTGOING = neo4j.Direction.OUTGOING
-INCOMING = neo4j.Direction.INCOMING
-EITHER = neo4j.Direction.EITHER
+OUTGOING = 1
+INCOMING = -1
+EITHER = 0
 
 
 # check origin node is saved and not deleted
@@ -98,7 +98,7 @@ class RelationshipManager(object):
         self._check_node(obj)
 
         rel = rel_helper(lhs='a', rhs='b', ident='r', **self.definition)
-        q = "START a=node({self}), b=node({them}) MATCH" + rel + "RETURN count(r)"
+        q = "START a=node({me}), b=node({them}) MATCH" + rel + "RETURN count(r)"
         return bool(self.origin.cypher(q, {'them': obj.__node__.id})[0][0][0])
 
     def _check_node(self, obj):
@@ -120,8 +120,8 @@ class RelationshipManager(object):
         self._check_node(obj)
 
         new_rel = rel_helper(lhs='us', rhs='them', ident='r', **self.definition)
-        q = "START them=node({them}), us=node({self}) CREATE UNIQUE " + new_rel
-        params = {'them': obj.__node__.id}
+        q = "START them=node({them}), us=node({me}) CREATE UNIQUE " + new_rel
+        params = {'them': obj.__node__._id}
 
         # set propeties via rel model
         if self.definition['model']:
@@ -159,7 +159,7 @@ class RelationshipManager(object):
         rel_model = self.definition['model']
 
         new_rel = rel_helper(lhs='us', rhs='them', ident='r', **self.definition)
-        q = "START them=node({them}), us=node({self}) MATCH " + new_rel + " RETURN r"
+        q = "START them=node({them}), us=node({me}) MATCH " + new_rel + " RETURN r"
         rel, = self.origin.cypher(q, {'them': obj.__node__.id})[0][0]
         if not rel:
             return
@@ -183,7 +183,7 @@ class RelationshipManager(object):
         old_rel = rel_helper(lhs='us', rhs='old', ident='r', **self.definition)
 
         # get list of properties on the existing rel
-        result, _ = self.origin.cypher("START us=node({self}), old=node({old}) MATCH " + old_rel + " RETURN r",
+        result, _ = self.origin.cypher("START us=node({me}), old=node({old}) MATCH " + old_rel + " RETURN r",
             {'old': old_obj.__node__.id})
         if result:
             existing_properties = result[0][0].__metadata__['data'].keys()
@@ -192,7 +192,7 @@ class RelationshipManager(object):
 
         # remove old relationship and create new one
         new_rel = rel_helper(lhs='us', rhs='new', ident='r2', **self.definition)
-        q = "START us=node({self}), old=node({old}), new=node({new}) MATCH " + old_rel
+        q = "START us=node({me}), old=node({old}), new=node({new}) MATCH " + old_rel
         q += " CREATE UNIQUE " + new_rel
 
         # copy over properties if we have
@@ -205,7 +205,7 @@ class RelationshipManager(object):
     @check_origin
     def disconnect(self, obj):
         rel = rel_helper(lhs='a', rhs='b', ident='r', **self.definition)
-        q = "START a=node({self}), b=node({them}) MATCH " + rel + " DELETE r"
+        q = "START a=node({me}), b=node({them}) MATCH " + rel + " DELETE r"
         self.origin.cypher(q, {'them': obj.__node__.id}),
 
     @check_origin
