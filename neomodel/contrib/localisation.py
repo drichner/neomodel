@@ -30,12 +30,12 @@ class LocalisedIndexManager(NodeIndexManager):
     def _execute(self, query):
         locale = Locale.get(self.locale_code)
         cquery = """
-            START lang = node({self}),
+            START lang = node({me}),
             lnode = node:%s({query})
             MATCH (lnode)-[:LANGUAGE]->(lang)
             RETURN lnode
             """ % (self.name)  # set index name
-        result, meta = locale.cypher(cquery, {'query': query})
+        result= locale.cypher(cquery, {'query': query})
         return [row[0] for row in result] if result else []
 
 

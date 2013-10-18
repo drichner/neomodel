@@ -99,7 +99,7 @@ class RelationshipManager(object):
 
         rel = rel_helper(lhs='a', rhs='b', ident='r', **self.definition)
         q = "START a=node({me}), b=node({them}) MATCH" + rel + "RETURN count(r)"
-        return bool(self.origin.cypher(q, {'them': obj.__node__.id})[0][0][0])
+        return bool(self.origin.cypher(q, {'them': obj.__node__._id}).data[0][0])
 
     def _check_node(self, obj):
         """check for valid target node i.e correct class and is saved"""
