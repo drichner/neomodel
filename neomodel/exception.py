@@ -73,7 +73,7 @@ def _obj_to_str(obj):
     if obj.__class__.__name__ == 'Node':
         return "node ({0})".format(obj.id)
     else:
-        return "relationship ({0})".format(obj.id)
+        return "relationship ({0})".format(obj._id)
 
 
 class InflateError(ValueError):

@@ -138,7 +138,7 @@ class RelationshipManager(object):
             for p, v in rel_model.deflate(rel_instance.__properties__).items():
                 params['place_holder_' + p] = v
                 q += " SET r." + p + " = {place_holder_" + p + "}"
-            rel_instance.__relationship__, = self.origin.cypher(q + " RETURN r", params)[0][0]
+            rel_instance.__relationship__, = self.origin.cypher(q + " RETURN r", params).data[0]
             return rel_instance
 
         # OR.. set properties schemaless
@@ -160,7 +160,7 @@ class RelationshipManager(object):
 
         new_rel = rel_helper(lhs='us', rhs='them', ident='r', **self.definition)
         q = "START them=node({them}), us=node({me}) MATCH " + new_rel + " RETURN r"
-        rel, = self.origin.cypher(q, {'them': obj.__node__.id})[0][0]
+        rel, = self.origin.cypher(q, {'them': obj.__node__._id}).data[0]
         if not rel:
             return
         rel_instance = rel_model.inflate(rel)
