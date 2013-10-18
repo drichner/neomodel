@@ -1,5 +1,6 @@
 from py2neo import neo4j
 from py2neo.neo4j import CypherQuery
+from py2neo.exceptions import CypherError
 from .exception import DoesNotExist, CypherException
 from .util import camel_to_upper, CustomBatch, _legacy_conflict_check
 from .properties import Property, PropertyManager, AliasProperty
@@ -46,9 +47,9 @@ def cypher_query(query, params=None):
         pms = params
         res = qry.execute(**params)
         return res
-    except Exception as e:
+    except CypherError as e:
         message =  e.message
-        raise Exception(query, params, message, None, None)
+        raise CypherException(qry, params, message, e.__class__, "")
 
 
 class CypherMixin(object):

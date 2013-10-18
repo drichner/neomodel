@@ -1,5 +1,5 @@
 from neomodel import StructuredNode, StringProperty, CypherException
-
+from py2neo.exceptions import ClientError
 
 class User2(StructuredNode):
     email = StringProperty()
@@ -7,11 +7,8 @@ class User2(StructuredNode):
 jim = User2(email='jim1@test.com').save()
 try:
     jim.cypher("START a=node({me}) RETURN xx")
-except Exception as e:
+except CypherException as e:
     assert hasattr(e, 'message')
-    assert hasattr(e, 'query')
-    assert hasattr(e, 'query_parameters')
-    assert hasattr(e, 'java_trace')
-    assert hasattr(e, 'java_exception')
+    print e
 else:
     assert False
