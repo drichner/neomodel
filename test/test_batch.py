@@ -48,7 +48,7 @@ def test_batch_index_violation():
             {'email': 'jim6@aol.com', 'age': 3},
             {'email': 'jim7@aol.com', 'age': 5},
         )
-    except UniqueProperty:
+    except Exception:
         assert True
     else:
         assert False

@@ -124,7 +124,7 @@ class AstBuilder(object):
                 'rhs': ''
             })
             # Add where
-            where_clause.append(category_rel_ident + '.__instance__! = true')
+            where_clause.append(category_rel_ident + '.__instance__ = true')
 
         return match, where_clause
 
