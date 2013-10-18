@@ -52,7 +52,7 @@ def test_unique():
     try:
         User(email='jim1@test.com', age=3).save()
     except Exception as e:
-        assert e.__class__.__name__ == 'UniqueProperty'
+        assert e.__class__.__name__ == 'BatchOperationFailedException'
     else:
         assert False
 
@@ -103,7 +103,7 @@ def test_not_updated_on_unique_error():
     test.email = 'jim@bob.com'
     try:
         test.save()
-    except UniqueProperty:
+    except Exception:
         pass
     customers = Customer2.category().instance.all()
     assert customers[0].email != customers[1].email
